@@ -1,0 +1,32 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content %}
+
+<form class="container mt-4" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <table>
+      <tr>
+        <td>Title</td>
+        <td><input type="text" class="form-control" name="title" id="title" placeholder="Enter Title" size=50></td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td><input type="text" class="form-control" name="description" id="description" placeholder="Enter Description" size=50></td>
+      </tr>
+      <tr>
+        <td>Website</td>
+        <td><input type="text" class="form-control" name="posting_url" id="posting_url" placeholder="Enter link to your website" size=50></td>
+      </tr>
+      <tr>
+        <td>Alternative Contact Details</td>
+        <td><input type="text" class="form-control" name="contact_details" id="contact_details" placeholder="If no website link is available, add contact details" size=50></td>
+      </tr>
+    </table>
+
+    <br>
+<input type="submit" value="Submit" class="btn" style="background-color: #4f868c; color: white; font-size: larger; width: 8rem;">
+</form>
+
+{% endblock content%}

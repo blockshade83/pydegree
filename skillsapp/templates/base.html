@@ -1,0 +1,17 @@
+{% include "./header.html" %}
+
+<div class="container-fluid" >
+    <div class="row" style="min-height:30px;">
+    </div>
+    <hr>
+
+    <div class="row" style="min-height:400px;">
+
+      {% block content %}{% endblock %}
+
+    </div>
+
+    <div class="row">
+        {% include "./footer.html" %}
+    </div>
+</div>

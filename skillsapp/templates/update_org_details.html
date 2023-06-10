@@ -1,0 +1,28 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content %}
+
+<form class="container mt-4" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <table>
+      <tr>
+        <td>Organization Name</td>
+        <td><input type="text" class="form-control" name="org_name" id="org_name" value="{{ organization.org_name }}" size=30></td>
+      </tr>
+      <tr>
+        <td>About Organization</td>
+        <td><input type="text" class="form-control" name="about_org" id="about_org" value="{{ organization.about_org }}" size=30></td>
+      </tr>
+      <tr>
+        <td>Website</td>
+        <td><input type="text" class="form-control" name="org_website" id="org_website" value="{{ organization.org_website }}" size=30></td>
+      </tr>
+    </table>
+
+    <br>
+<input type="submit" value="Submit" class="btn" style="background-color: #4f868c; color: white; font-size: larger; width: 8rem;">
+</form>
+
+{% endblock content%}
