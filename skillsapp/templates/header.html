@@ -5,9 +5,25 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="Social Network">
-        <meta name="keywords" content="HTML,social,network,advanced web dev,kune">
+        <meta name="description" content="Job Portal for Volunteering">
+        <meta name="keywords" content="HTML,volunteer,volunteering,NGO,skills">
         <meta name="author" content="I.Costache">
-        <link rel="stylesheet" type="text/css" href ="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'skillsapp/chosen.min.css'%}"> <!-- https://harvesthq.github.io/chosen/-->
+        <script type="text/javascript" src="{% static 'skillsapp/jquery-3.7.0.js' %}"></script>
+        <script type="text/javascript" src="{% static 'skillsapp/chosen.jquery.min.js' %}"></script>  <!-- https://harvesthq.github.io/chosen/-->
     </head>
     <body>
+
+      {% if user.is_authenticated %}
+
+      <p>Hello {{ user }}</p>
+      <a href="{% url 'user_logout' %}" style="padding:10px;font-size:0.9em">Logout</a>
+      <a href="{% url 'add_posting' %}" style="padding:10px;font-size:0.9em">Add Posting</a>
+      <a href="{% url 'update_org_details' %}" style="padding:10px;font-size:0.9em">Update Org Details</a>
+
+      {% else %}
+
+      <a href="{% url 'register' %}" style="padding:10px;font-size:0.9em">Register</a>
+      <a href="{% url 'user_login' %}" style="padding:10px;font-size:0.9em">Login</a>
+
+      {% endif %}

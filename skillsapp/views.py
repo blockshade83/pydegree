@@ -66,10 +66,16 @@ def add_posting(request):
         title = request.POST['title']
         description = request.POST['description']
         posting_url = request.POST['posting_url']
-        contact_details = request.POST['contact_details']
+        contact_details = request.POST.getlist('contact_details')
         posted_on = datetime.today()
         last_updated_on = datetime.today()
+        skills = request.POST.getlist('skills_select')
+        print(request.POST)
+        print(request.POST.getlist('skills_select'))
         organization = Organization.objects.get(user=request.user)
+
+        if (posting_url == "" and contact_details == ""):
+            return HttpResponse('Posting URL can be blank only if alternative contact details are specified')
 
         posting = Posting.objects.create(organization=organization,
                                          title=title,
@@ -79,8 +85,21 @@ def add_posting(request):
                                          posted_on=posted_on,
                                          last_updated_on=last_updated_on)
         posting.save()
+
+        for skill in skills:
+            skill_instance = Skill.objects.get(skill_name=skill)
+            posting_skill = PostingSkills.objects.create(skill=skill_instance,posting=posting)
+            posting_skill.save()
+
         return HttpResponse('Posting created')
-    return render(request, 'add_posting.html')
+    else:
+        skills_instances = Skill.objects.all()
+        serializer = SkillSerializer(skills_instances, many=True)
+        skills_dict = serializer.data
+        skills_list = []
+        for element in skills_dict:
+            skills_list.append(element['skill_name'])
+        return render(request, 'add_posting.html', {'skills': skills_list})
 
 @login_required
 def update_org_details(request):

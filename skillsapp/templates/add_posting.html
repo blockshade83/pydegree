@@ -9,11 +9,11 @@
     <table>
       <tr>
         <td>Title</td>
-        <td><input type="text" class="form-control" name="title" id="title" placeholder="Enter Title" size=50></td>
+        <td><input type="text" class="form-control" name="title" id="title" placeholder="Enter Title" size=50 required></td>
       </tr>
       <tr>
         <td>Description</td>
-        <td><input type="text" class="form-control" name="description" id="description" placeholder="Enter Description" size=50></td>
+        <td><input type="text" class="form-control" name="description" id="description" placeholder="Enter Description" size=50 required></td>
       </tr>
       <tr>
         <td>Website</td>
@@ -23,10 +23,27 @@
         <td>Alternative Contact Details</td>
         <td><input type="text" class="form-control" name="contact_details" id="contact_details" placeholder="If no website link is available, add contact details" size=50></td>
       </tr>
+      <tr>
+        <td>Skills You will Develop</td>
+        <td>
+          <select multiple="" name="skills_select" id="skills_select" style="width: 300px;" required>
+            {% for skill in skills %}
+              <option>{{ skill }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
     </table>
 
     <br>
 <input type="submit" value="Submit" class="btn" style="background-color: #4f868c; color: white; font-size: larger; width: 8rem;">
 </form>
+
+<!-- https://www.youtube.com/watch?v=NyrH70uH5zM -->
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#skills_select').chosen();
+  });
+</script>
 
 {% endblock content%}
