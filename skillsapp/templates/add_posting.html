@@ -16,6 +16,16 @@
         <td><input type="text" class="form-control" name="description" id="description" placeholder="Enter Description" size=50 required></td>
       </tr>
       <tr>
+        <td>City</td>
+        <td>
+          <select name="city_select" id="city_select" style="width: 300px;" required>
+            {% for city in cities %}
+              <option>{{ city }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
         <td>Website</td>
         <td><input type="text" class="form-control" name="posting_url" id="posting_url" placeholder="Enter link to your website" size=50></td>
       </tr>
@@ -43,6 +53,9 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('#skills_select').chosen();
+  });
+  $(document).ready(function() {
+    $('#city_select').chosen();
   });
 </script>
 

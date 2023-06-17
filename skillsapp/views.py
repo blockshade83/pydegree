@@ -11,10 +11,14 @@ from .serializers import *
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'index.html')
+        org_instance = Organization.objects.get(user=request.user)
+        postings_instances = Posting.objects.filter(organization=org_instance)
     else:
-        template = loader.get_template('index.html')
-        return HttpResponse(template.render())
+        postings_instances = Posting.objects.all()
+    postings_list = PostingSerializer(postings_instances, many=True).data
+    # for element in postings_list:
+    #     print(element)
+    return render(request, 'index.html', {'postings': postings_list})
 
 def register(request):
     if request.method == 'POST':
@@ -70,8 +74,9 @@ def add_posting(request):
         posted_on = datetime.today()
         last_updated_on = datetime.today()
         skills = request.POST.getlist('skills_select')
-        print(request.POST)
-        print(request.POST.getlist('skills_select'))
+        city = request.POST['city_select']
+        # print(request.POST)
+        # print(request.POST.getlist('skills_select'))
         organization = Organization.objects.get(user=request.user)
 
         if (posting_url == "" and contact_details == ""):
@@ -80,6 +85,7 @@ def add_posting(request):
         posting = Posting.objects.create(organization=organization,
                                          title=title,
                                          description=description,
+                                         city=City.objects.get(city=city),
                                          posting_url=posting_url,
                                          contact_details=contact_details,
                                          posted_on=posted_on,
@@ -94,12 +100,18 @@ def add_posting(request):
         return HttpResponse('Posting created')
     else:
         skills_instances = Skill.objects.all()
-        serializer = SkillSerializer(skills_instances, many=True)
-        skills_dict = serializer.data
+        skills_serializer = SkillSerializer(skills_instances, many=True)
+        skills_dict = skills_serializer.data
         skills_list = []
         for element in skills_dict:
             skills_list.append(element['skill_name'])
-        return render(request, 'add_posting.html', {'skills': skills_list})
+        cities_instances = City.objects.all()
+        cities_serializer = CitySerializer(cities_instances, many=True)
+        cities_dict = cities_serializer.data
+        cities_list = []
+        for element in cities_dict:
+            cities_list.append(element['city'])
+        return render(request, 'add_posting.html', {'skills': skills_list, 'cities': cities_list})
 
 @login_required
 def update_org_details(request):

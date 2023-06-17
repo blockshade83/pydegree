@@ -1,8 +1,38 @@
 {% extends "./base.html" %}
 {% load static %}
+{% load bootstrap5 %}
 
 {% block content %}
 
   <!-- <img src="{% static 'skillsapp/background-1.jpeg' %}" style="max-width:20%;"> -->
+
+{% if user.is_authenticated %}
+
+<h4>My Organizations' Postings</h4></br></br>
+
+{% else %}
+
+<h4>All Postings</h4></br></br>
+
+{% endif %}
+
+<table class="table table-striped table-hover table-sm">
+  <tr>
+    <th scope="col">Organization</th>
+    <th scope="col">Title</th>
+    <th scope="col">Last Updated On</th>
+    <th scope="col">Location</th>
+  </tr>
+
+  {% for posting in postings %}
+  <tr>
+    <td>{{ posting.org_name }}</td>
+    <td>{{ posting.title }}</td>
+    <td>{{ posting.last_updated_on }}</td>
+    <td>{{ posting.city }}, {{ posting.country }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 
 {% endblock content%}
