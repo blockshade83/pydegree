@@ -18,13 +18,15 @@
       {% if user.is_authenticated %}
 
       <p>Hello {{ user }}</p>
+      <a href="{% url 'index' %}">Home</a>
       <a href="{% url 'user_logout' %}" style="padding:10px;font-size:0.9em">Logout</a>
       <a href="{% url 'add_posting' %}" style="padding:10px;font-size:0.9em">Add Posting</a>
       <a href="{% url 'update_org_details' %}" style="padding:10px;font-size:0.9em">Update Org Details</a>
 
       {% else %}
 
-      <a href="{% url 'register' %}" style="padding:10px;font-size:0.9em">Register</a>
-      <a href="{% url 'user_login' %}" style="padding:10px;font-size:0.9em">Login</a>
+      <a href="{% url 'index' %}">Home</a>
+      <a href="{% url 'register' %}">Register</a>
+      <a href="{% url 'user_login' %}">Login</a>
 
       {% endif %}

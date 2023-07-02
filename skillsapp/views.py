@@ -10,15 +10,45 @@ from .forms import *
 from .serializers import *
 
 def index(request):
-    if request.user.is_authenticated:
-        org_instance = Organization.objects.get(user=request.user)
-        postings_instances = Posting.objects.filter(organization=org_instance)
-    else:
-        postings_instances = Posting.objects.all()
-    postings_list = PostingSerializer(postings_instances, many=True).data
-    # for element in postings_list:
-    #     print(element)
-    return render(request, 'index.html', {'postings': postings_list})
+    posting_instances = Posting.objects.all()
+    city = None
+    org = None
+    # if request.user.is_authenticated:
+    #     org_instance = Organization.objects.get(user=request.user)
+    #     # get postings of current organization only
+    #     posting_instances = posting_instances.filter(organization=org_instance)
+
+    if request.method == 'POST':
+        try:
+            city = request.POST['city_select']
+        except:
+            pass
+        try:
+            org = request.POST['org_select']
+        except:
+            pass
+        # print('city:',city)
+        # print('org:', org)
+        if city:
+            print(city)
+            city_instance = City.objects.get(city=city)
+            posting_instances = posting_instances.filter(city=city_instance)
+        if org:
+            org_instance = Organization.objects.get(org_name=org)
+            posting_instances = posting_instances.filter(organization=org_instance)
+    if request.method == 'GET':
+        keyword = request.GET.get('keyword')
+        if keyword:
+            posting_instances = posting_instances.filter(description__icontains=keyword)
+
+    postings_list = PostingSerializer(posting_instances, many=True).data
+    cities_list = get_cities_list()
+    org_list = get_org_list()
+    return render(request, 'index.html', {'postings': postings_list,
+                                          'cities': cities_list,
+                                          'organizations': org_list,
+                                          'city_selection': city,
+                                          'org_selection': org })
 
 def register(request):
     if request.method == 'POST':
@@ -75,8 +105,6 @@ def add_posting(request):
         last_updated_on = datetime.today()
         skills = request.POST.getlist('skills_select')
         city = request.POST['city_select']
-        # print(request.POST)
-        # print(request.POST.getlist('skills_select'))
         organization = Organization.objects.get(user=request.user)
 
         if (posting_url == "" and contact_details == ""):
@@ -99,19 +127,24 @@ def add_posting(request):
 
         return HttpResponse('Posting created')
     else:
+        # get list of skills in the database to populate selection forms
         skills_instances = Skill.objects.all()
         skills_serializer = SkillSerializer(skills_instances, many=True)
         skills_dict = skills_serializer.data
         skills_list = []
         for element in skills_dict:
             skills_list.append(element['skill_name'])
-        cities_instances = City.objects.all()
-        cities_serializer = CitySerializer(cities_instances, many=True)
-        cities_dict = cities_serializer.data
-        cities_list = []
-        for element in cities_dict:
-            cities_list.append(element['city'])
+        # get list of cities in the database to populate selection forms
+        cities_list = get_cities_list()
         return render(request, 'add_posting.html', {'skills': skills_list, 'cities': cities_list})
+
+def view_posting(request, posting_id):
+    if request.method == 'GET':
+        posting_instance = Posting.objects.get(id=posting_id)
+        posting = PostingSerializer(posting_instance).data
+        return render(request, 'view_posting.html', {'posting': posting})
+    else:
+        return HttpResponseRedirect('/')
 
 @login_required
 def update_org_details(request):
@@ -131,7 +164,25 @@ def update_org_details(request):
     else:
         return render(request, 'update_org_details.html', {'organization': organization})
 
+# get list of cities in the database to populate selection forms
+def get_cities_list():
+    cities_instances = City.objects.all()
+    cities_serializer = CitySerializer(cities_instances, many=True)
+    cities_dict = cities_serializer.data
+    cities_list = []
+    for element in cities_dict:
+        cities_list.append(element['city'])
+    return cities_list
 
+# get list of organizations in the database to populate selection forms
+def get_org_list():
+    org_instances = Organization.objects.all()
+    org_serializer = OrganizationSerializer(org_instances, many=True)
+    org_dict = org_serializer.data
+    org_list = []
+    for element in org_dict:
+        org_list.append(element['org_name'])
+    return org_list
 
 
 

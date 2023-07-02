@@ -15,11 +15,11 @@ class Organization(models.Model):
     org_website = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.user.username
+        return self.user.org_name
 
 class Country(models.Model):
     class Meta:
-        verbose_name_plural = "Countries"
+        verbose_name_plural = "Countries" # name to display in Django Admin interface, which defaults plural to class name + 's'
 
     country = models.TextField(max_length = 100)
     def __str__(self):
@@ -27,7 +27,7 @@ class Country(models.Model):
 
 class City(models.Model):
     class Meta:
-        verbose_name_plural = "Cities"
+        verbose_name_plural = "Cities" # name to display in Django Admin interface, which defaults plural to class name + 's'
 
     city = models.TextField(max_length = 100)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
@@ -49,7 +49,7 @@ class Posting(models.Model):
         return self.organization.org_name + ' - ' + self.title
 
     class Meta:
-        ordering = ['-last_updated_on']
+        ordering = ['-last_updated_on'] # sort posting in descending order
 
 class PostingSkills(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)

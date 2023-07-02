@@ -1,0 +1,65 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid bg-light">
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-6">
+
+    <table>
+      <tr>
+        <td>Organization</td>
+        <td>{{ posting.org_name }}</td>
+      </tr>
+      <tr>
+        <td>About Organization</td>
+        <td>{{ posting.about_org }}</td>
+      </tr>
+      <tr>
+        <td>Job Title</td>
+        <td>{{ posting.title }}</td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td>{{ posting.description}}</td>
+      </tr>
+      <tr>
+        <td>City</td>
+        <td>{{ posting.city }}</td>
+      </tr>
+      <tr>
+        <td>Skills You will Develop</td>
+        <td>
+          {% for posting_skill in posting.skills %}
+            {{ posting_skill.skill_name }};
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <td>Website</td>
+        <td>{{ posting.posting_url }}</td>
+      </tr>
+      <tr>
+        <td>Alternative Contact Details</td>
+        <td><{{ posting.contact_details }}</td>
+      </tr>
+    </table>
+
+    </div>
+    <div class="col"></div>
+  </div>
+</div>
+
+<!-- https://www.youtube.com/watch?v=NyrH70uH5zM -->
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#skills_select').chosen();
+  });
+  $(document).ready(function() {
+    $('#city_select').chosen();
+  });
+</script>
+
+{% endblock content%}
