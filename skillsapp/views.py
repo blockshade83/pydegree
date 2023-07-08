@@ -13,6 +13,7 @@ def index(request):
     posting_instances = Posting.objects.all()
     city = None
     org = None
+    skill = None
     # if request.user.is_authenticated:
     #     org_instance = Organization.objects.get(user=request.user)
     #     # get postings of current organization only
@@ -27,8 +28,10 @@ def index(request):
             org = request.POST['org_select']
         except:
             pass
-        # print('city:',city)
-        # print('org:', org)
+        try:
+            skill = request.POST['skill_select']
+        except:
+            pass
         if city:
             print(city)
             city_instance = City.objects.get(city=city)
@@ -36,6 +39,13 @@ def index(request):
         if org:
             org_instance = Organization.objects.get(org_name=org)
             posting_instances = posting_instances.filter(organization=org_instance)
+        if skill:
+            skill_instance = Skill.objects.get(skill_name=skill)
+            posting_skills_instances = PostingSkills.objects.filter(skill=skill_instance)
+            posting_id_list = []
+            for instance in posting_skills_instances:
+                posting_id_list.append(instance.posting.id)
+            posting_instances = posting_instances.filter(id__in=posting_id_list)
     if request.method == 'GET':
         keyword = request.GET.get('keyword')
         if keyword:
@@ -44,11 +54,14 @@ def index(request):
     postings_list = PostingSerializer(posting_instances, many=True).data
     cities_list = get_cities_list()
     org_list = get_org_list()
+    skills_list = get_skills_list()
     return render(request, 'index.html', {'postings': postings_list,
                                           'cities': cities_list,
                                           'organizations': org_list,
+                                          'skills': skills_list,
                                           'city_selection': city,
-                                          'org_selection': org })
+                                          'org_selection': org,
+                                          'skill_selection': skill })
 
 def register(request):
     if request.method == 'POST':
@@ -184,6 +197,15 @@ def get_org_list():
         org_list.append(element['org_name'])
     return org_list
 
+# get list of skills in the database to populate selection forms
+def get_skills_list():
+    skills_instances = Skill.objects.all()
+    skills_serializer = SkillSerializer(skills_instances, many=True)
+    skills_dict = skills_serializer.data
+    skills_list = []
+    for element in skills_dict:
+        skills_list.append(element['skill_name'])
+    return sorted(skills_list)
 
 
 

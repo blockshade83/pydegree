@@ -6,48 +6,22 @@
 <div class="container-fluid bg-light">
   <div class="row">
     <div class="col"></div>
-    <div class="col-6">
+      <div class="col-6">
 
-    <table>
-      <tr>
-        <td>Organization</td>
-        <td>{{ posting.org_name }}</td>
-      </tr>
-      <tr>
-        <td>About Organization</td>
-        <td>{{ posting.about_org }}</td>
-      </tr>
-      <tr>
-        <td>Job Title</td>
-        <td>{{ posting.title }}</td>
-      </tr>
-      <tr>
-        <td>Description</td>
-        <td>{{ posting.description}}</td>
-      </tr>
-      <tr>
-        <td>City</td>
-        <td>{{ posting.city }}</td>
-      </tr>
-      <tr>
-        <td>Skills You will Develop</td>
-        <td>
-          {% for posting_skill in posting.skills %}
-            {{ posting_skill.skill_name }};
-          {% endfor %}
-        </td>
-      </tr>
-      <tr>
-        <td>Website</td>
-        <td>{{ posting.posting_url }}</td>
-      </tr>
-      <tr>
-        <td>Alternative Contact Details</td>
-        <td><{{ posting.contact_details }}</td>
-      </tr>
-    </table>
+        <br><h5><strong>{{ posting.org_name }}</strong></h5><br>
+        <p>{{ posting.about_org }}</p>
+        <h5><strong>{{ posting.title }}</strong></h5><br>
+        <p>{{ posting.description}}</p>
+        <p><strong>Location: </strong>{{ posting.city }}, {{ posting.country}}</p>
+        <p><strong>Skills You will Develop:</strong>
+            {% for posting_skill in posting.skills %}
+              {{ posting_skill.skill_name }};
+            {% endfor %}
+        </p>
+        <p>Apply at: <a href='{{ posting.posting_url }}'> {{ posting.posting_url }} </a></p>
+        <p>Alternative Contact Details: {{ posting.contact_details }}</p>
 
-    </div>
+      </div>
     <div class="col"></div>
   </div>
 </div>

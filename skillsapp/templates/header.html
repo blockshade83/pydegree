@@ -10,18 +10,21 @@
         <link rel="stylesheet" href="{% static 'skillsapp/chosen.min.css'%}"> <!-- https://harvesthq.github.io/chosen/-->
         <script type="text/javascript" src="{% static 'skillsapp/jquery-3.7.0.js' %}"></script>
         <script type="text/javascript" src="{% static 'skillsapp/chosen.jquery.min.js' %}"></script>  <!-- https://harvesthq.github.io/chosen/-->
+        <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet"> -->
         {% load bootstrap5 %}
         {% bootstrap_css %}
+        <link rel="stylesheet" href="{% static 'skillsapp/stylesheet.css'%}">
     </head>
     <body>
 
       {% if user.is_authenticated %}
 
-      <p>Hello {{ user }}</p>
       <a href="{% url 'index' %}">Home</a>
-      <a href="{% url 'user_logout' %}" style="padding:10px;font-size:0.9em">Logout</a>
-      <a href="{% url 'add_posting' %}" style="padding:10px;font-size:0.9em">Add Posting</a>
-      <a href="{% url 'update_org_details' %}" style="padding:10px;font-size:0.9em">Update Org Details</a>
+      <a href="{% url 'user_logout' %}" style="padding:10px;">Logout</a>
+      <a href="{% url 'add_posting' %}" style="padding:10px;">Add Posting</a>
+      <a href="{% url 'update_org_details' %}" style="padding:10px;">Update Org Details</a>
 
       {% else %}
 

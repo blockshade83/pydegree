@@ -15,7 +15,7 @@ class Organization(models.Model):
     org_website = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.user.org_name
+        return self.org_name
 
 class Country(models.Model):
     class Meta:
@@ -54,3 +54,6 @@ class Posting(models.Model):
 class PostingSkills(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     posting = models.ForeignKey(Posting, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.posting.title + ' - ' + self.skill.skill_name
