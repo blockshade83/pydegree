@@ -11,34 +11,39 @@ from .serializers import *
 
 def index(request):
     posting_instances = Posting.objects.all()
+    # initialize city, org, skill objects
     city = None
     org = None
     skill = None
-    # if request.user.is_authenticated:
-    #     org_instance = Organization.objects.get(user=request.user)
-    #     # get postings of current organization only
-    #     posting_instances = posting_instances.filter(organization=org_instance)
 
     if request.method == 'POST':
+        # check if a value was passed for city via filtering
         try:
             city = request.POST['city_select']
         except:
             pass
+
+        # check if a value was passed for organization via filtering
         try:
             org = request.POST['org_select']
         except:
             pass
+
+        # check if a value was passed for a skill via filtering
         try:
             skill = request.POST['skill_select']
         except:
             pass
+
+        # filter instances by city if a city was used as a filter
         if city:
-            print(city)
             city_instance = City.objects.get(city=city)
             posting_instances = posting_instances.filter(city=city_instance)
+        # filter instances by organization if an organization was used as a filter
         if org:
             org_instance = Organization.objects.get(org_name=org)
             posting_instances = posting_instances.filter(organization=org_instance)
+        # filter instances by skill if a skills was used as a filter
         if skill:
             skill_instance = Skill.objects.get(skill_name=skill)
             posting_skills_instances = PostingSkills.objects.filter(skill=skill_instance)
@@ -46,14 +51,20 @@ def index(request):
             for instance in posting_skills_instances:
                 posting_id_list.append(instance.posting.id)
             posting_instances = posting_instances.filter(id__in=posting_id_list)
+
+    # filter instances by keyword if the keyword is found in the description
     if request.method == 'GET':
         keyword = request.GET.get('keyword')
         if keyword:
             posting_instances = posting_instances.filter(description__icontains=keyword)
 
+    # serialize data for postings
     postings_list = PostingSerializer(posting_instances, many=True).data
+    # get list of all cities in the database to populate dropdown list
     cities_list = get_cities_list()
+    # get list of all organizations in the database to populate dropdown list
     org_list = get_org_list()
+    # get list of all skills in the database to populate dropdown list
     skills_list = get_skills_list()
     return render(request, 'index.html', {'postings': postings_list,
                                           'cities': cities_list,
@@ -138,15 +149,9 @@ def add_posting(request):
             posting_skill = PostingSkills.objects.create(skill=skill_instance,posting=posting)
             posting_skill.save()
 
-        return HttpResponse('Posting created')
     else:
         # get list of skills in the database to populate selection forms
-        skills_instances = Skill.objects.all()
-        skills_serializer = SkillSerializer(skills_instances, many=True)
-        skills_dict = skills_serializer.data
-        skills_list = []
-        for element in skills_dict:
-            skills_list.append(element['skill_name'])
+        skills_list = get_skills_list()
         # get list of cities in the database to populate selection forms
         cities_list = get_cities_list()
         return render(request, 'add_posting.html', {'skills': skills_list, 'cities': cities_list})
@@ -158,6 +163,90 @@ def view_posting(request, posting_id):
         return render(request, 'view_posting.html', {'posting': posting})
     else:
         return HttpResponseRedirect('/')
+
+@login_required
+def my_postings(request):
+    if request.method == 'GET':
+        org_instance = Organization.objects.get(user=request.user)
+        posting_instances = Posting.objects.filter(organization=org_instance)
+        postings_list = PostingSerializer(posting_instances, many=True).data
+        return render(request, 'my_postings.html', {'postings': postings_list})
+    else:
+        return HttpResponseRedirect('/')
+
+@login_required
+def edit_posting(request, posting_id):
+    if request.method == 'POST':
+        if (request.POST['posting_url'] == "" and request.POST['description'] == ""):
+            return HttpResponse('Posting URL can be blank only if alternative contact details are specified')
+        try:
+            # get posting instance based on id
+            posting_instance = Posting.objects.get(id=posting_id)
+
+            # set new values for posting attributes
+            posting_instance.title = request.POST['title']
+            posting_instance.description = request.POST['description']
+            posting_instance.posting_url = request.POST['posting_url']
+            posting_instance.contact_details = request.POST.getlist('contact_details')
+            posting_instance.last_updated_on = datetime.today()
+            posting_instance.city = City.objects.get(city=request.POST['city_select'])
+
+            # get list of skills submitted via the edit form
+            skills = request.POST.getlist('skills_select')
+
+            # get all instances of posting skills previously saved for the selected posting
+            posting_skill_instances = PostingSkills.objects.filter(posting=posting_instance)
+            # iterate over all posting skills for the selected posting
+            for instance in posting_skill_instances:
+                # if the existing skill for the posting is no longer a part of the updated list, delete the instance
+                if instance.skill.skill_name not in skills:
+                    instance.delete()
+
+            # iterate over the updated list of skills submitted with the edit form
+            for skill in skills:
+                # get instance for the skill based on the name
+                skill_instance = Skill.objects.get(skill_name=skill)
+                # create instance if it doesn't exist
+                posting_skill_instance = PostingSkills.objects.get_or_create(posting=posting_instance,skill=skill_instance)
+
+            posting_instance.save()
+
+            return HttpResponse('Posting updated')
+        except Posting.DoesNotExist:
+            return HttpResponseRedirect('/')
+    else:
+        # get posting instance
+        posting_instance = Posting.objects.get(id=posting_id)
+        posting = PostingSerializer(posting_instance).data
+        # get list of skills in the database to populate selection forms
+        skills_list = get_skills_list()
+        # get list of cities in the database to populate selection forms
+        cities_list = get_cities_list()
+        # define dictionary to match selected skills for posting in the list of all skills
+        # this will support pre-populating the selected skills in the dropdown list
+        skills_intersected = {}
+        # iterate over all existing skills
+        for skill in skills_list:
+            # define skill as being not selected in the posting to start with
+            skills_intersected[skill] = 'no'
+            # iterate over the skills selected for the specific job posting
+            for posting_skill in posting['skills']:
+                # set value in dictionary as yes if the skill is also found in the posting
+                if skill == posting_skill['skill_name']:
+                    skills_intersected[skill] = 'yes'
+        return render(request, 'edit_posting.html', {'posting': posting, 'skills': skills_intersected, 'cities': cities_list})
+
+@login_required
+def reconfirm_posting(request, posting_id):
+    if request.method == 'GET':
+        try:
+            # get posting instance based on id
+            posting_instance = Posting.objects.get(id=posting_id)
+            posting_instance.last_updated_on = datetime.today()
+            posting_instance.save()
+        except Posting.DoesNotExist:
+            return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/my_postings')
 
 @login_required
 def update_org_details(request):

@@ -1,12 +1,12 @@
 {% extends "./base.html" %}
 {% load static %}
 
-{% block content %}
+{% block content_center %}
 
 <form class="container mt-4" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <table>
+    <table class="table table-sm">
       <tr>
         <td>Organization Name</td>
         <td><input type="text" class="form-control" name="org_name" id="org_name" value="{{ organization.org_name }}" size=30></td>
@@ -22,7 +22,7 @@
     </table>
 
     <br>
-<input type="submit" value="Submit" class="btn" style="background-color: #4f868c; color: white; font-size: larger; width: 8rem;">
+<input type="submit" value="Submit" class="btn btn-primary">
 </form>
 
-{% endblock content%}
+{% endblock content_center%}

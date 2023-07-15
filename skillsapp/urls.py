@@ -10,5 +10,8 @@ urlpatterns = [
     path('logout', views.user_logout, name = 'user_logout'),
     path('add_posting', views.add_posting, name = 'add_posting'),
     path('view_posting/<int:posting_id>', views.view_posting, name = 'view_posting'),
+    path('my_postings', views.my_postings, name = 'my_postings'),
+    path('edit_posting/<int:posting_id>', views.edit_posting, name = 'edit_posting'),
+    path('reconfirm_posting/<int:posting_id>', views.reconfirm_posting, name = 'reconfirm_posting'),
     path('update_org_details', views.update_org_details, name = 'update_org_details'),
 ]

@@ -1,5 +1,6 @@
 {% extends "./base.html" %}
 {% load static %}
+{% load define_action %}
 
 {% block content_center %}
 
@@ -9,44 +10,51 @@
     <table>
       <tr>
         <td>Title</td>
-        <td><input type="text" class="form-control" name="title" id="title" placeholder="Enter Title" size=50 required></td>
+        <td><input type="text" class="form-control" name="title" id="title" value="{{ posting.title }}" size=50 required></td>
       </tr>
       <tr>
         <td>Description</td>
-        <td><textarea rows="10" column="50" class="form-control" name="description" id="description" placeholder="Enter Description" size=50 required></textarea></td>
+        <td><textarea rows="10" column="50" class="form-control" name="description" id="description" size=50 required>{{ posting.description }}</textarea></td>
       </tr>
       <tr>
         <td>City</td>
         <td>
           <select name="city_select" id="city_select" style="width: 300px;" required>
-            <option selected disabled> -- select a City -- </option>
             {% for city in cities %}
-              <option>{{ city }}</option>
+              {% if city == posting.city %}
+                <option selected = {{ city }}>{{ city }}</option>
+              {% else %}
+                <option>{{ city }}</option>
+              {% endif %}
             {% endfor %}
           </select>
         </td>
       </tr>
       <tr>
         <td>Website</td>
-        <td><input type="text" class="form-control" name="posting_url" id="posting_url" placeholder="Enter link to your website" size=50></td>
+        <td><input type="text" class="form-control" name="posting_url" id="posting_url" value={{ posting.posting_url }} size=50></td>
       </tr>
       <tr>
         <td>Alternative Contact Details</td>
-        <td><input type="text" class="form-control" name="contact_details" id="contact_details" placeholder="If no website link is available, add contact details" size=50></td>
+        <td><input type="text" class="form-control" name="contact_details" id="contact_details" value={{ posting.contact_details }} size=50></td>
       </tr>
       <tr>
         <td>Skills You will Develop</td>
         <td>
           <select multiple="" name="skills_select" id="skills_select" style="width: 300px;" required>
-            {% for skill in skills %}
-              <option>{{ skill }}</option>
+            {% for key,value in skills.items %}
+              {% if value == 'yes' %}
+                <option selected value="{{ key }}">{{ key }}</option>
+              {% else %}
+                <option>{{ key }}</option>
+              {% endif %}
             {% endfor %}
           </select>
         </td>
       </tr>
       <tr>
         <td></td>
-        <td><input type="submit" value="Submit" class="btn btn-primary"></td>
+        <td><input type="submit" value="Update" class="btn btn-primary"></td>
       </tr>
     </table>
     <br>

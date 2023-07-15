@@ -2,15 +2,9 @@
 {% load static %}
 {% load bootstrap5 %}
 
-{% block content %}
+{% block content_left %}
 
   <!-- <img src="{% static 'skillsapp/background-1.jpeg' %}" style="max-width:20%;"> -->
-
-<div class="container bg-light p-3">
-  <div class="row">
-
-    <div class="col p-3">
-
       <h5><strong>Filter Jobs</strong></h5><br><br>
 
       <form action="{% url 'index' %}" method = "POST" enctype="multipart/form-data">
@@ -72,10 +66,11 @@
         <input type="submit" class="btn btn-primary btn-sm" name="submit" value="Search"/>
       </form>
 
+{% endblock content_left%}
 
-    </div>
+    <!-- <div class="col-6 rounded border p-3 bg-white"> -->
 
-    <div class="col-6 rounded border p-3 bg-white">
+{% block content_center %}
 
       <h5><strong>Job Postings</strong></h5></br></br>
       {% if user.is_authenticated %}
@@ -103,12 +98,6 @@
           <hr>
         </div>
       {% endfor %}
-    </div>
-
-    <div class="col"></div>
-
-  </div>
-</div>
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -122,4 +111,4 @@
   });
 </script>
 
-{% endblock content%}
+{% endblock content_center%}

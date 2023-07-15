@@ -1,0 +1,27 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content_center %}
+
+  <table class="table">
+    <tr>
+      <th>Posting Title</th>
+      <th>Location</th>
+      <th>Last Updated</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for posting in postings %}
+    <tr>
+      <td>{{ posting.title }}</td>
+      <td>{{ posting.city }}, {{ posting.country}}</td>
+      <td>{{ posting.last_updated_on }}</td>
+      <td><a class="btn btn-primary btn-sm" name="view" href="view_posting/{{ posting.id }}">View</a></td>
+      <td><a class="btn btn-primary btn-sm" name="edit" href="edit_posting/{{ posting.id }}">Edit</a></td>
+      <td><a class="btn btn-secondary btn-sm" name="reconfirm" href="reconfirm_posting/{{ posting.id }}">Reconfirm</a></td>
+    <tr>
+    {% endfor %}
+  </table>
+
+{% endblock content_center%}

@@ -1,14 +1,21 @@
 <div class="container-fluid">
-    <div class="row bg-white border-bottom" style="min-height:30px;">
-      <div class="col"></div>
+    <div class="row bg-white border-bottom" style="min-height:30px;padding-bottom:10px">
+      <div class="col">
+        {% if user.is_authenticated %}
+          <p>{{ user }}</p>
+        {% endif %}
+
+      </div>
       <div class="col-6">
         {% include "./header.html" %}
       </div>
       <div class="col"></div>
     </div>
 
-    <div class="row" style="min-height:400px;">
-      {% block content %}{% endblock %}
+    <div class="row bg-light" style="min-height:400px;padding-top:10px">
+      <div class="col p-3">{% block content_left %}{% endblock %}</div>
+      <div class="col-6 rounded border p-3 bg-white">{% block content_center %}{% endblock %}</div>
+      <div class="col p-3">{% block content_right %}{% endblock %}</div>
     </div>
 
     <div class="row">
