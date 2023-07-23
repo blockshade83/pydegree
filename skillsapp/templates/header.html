@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="{% static 'skillsapp/chosen.min.css'%}"> <!-- https://harvesthq.github.io/chosen/-->
         <script type="text/javascript" src="{% static 'skillsapp/jquery-3.7.0.js' %}"></script>
         <script type="text/javascript" src="{% static 'skillsapp/chosen.jquery.min.js' %}"></script>  <!-- https://harvesthq.github.io/chosen/-->
+
         <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet"> -->
@@ -20,7 +21,6 @@
     <body>
 
       {% if user.is_authenticated %}
-
       <a href="{% url 'index' %}" class="btn btn-outline-primary">Home</a>
 
       <a href="{% url 'add_posting' %}" class="btn btn-outline-primary">Add Posting</a>

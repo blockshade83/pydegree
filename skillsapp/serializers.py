@@ -5,7 +5,7 @@ from .models import *
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
-        fields = ['user','org_name','about_org','org_website']
+        fields = ['user','org_name','about_org','org_website','logo']
 
 # serializer for skill instances
 class SkillSerializer(serializers.ModelSerializer):
@@ -36,6 +36,7 @@ class PostingSerializer(serializers.ModelSerializer):
     city = serializers.SerializerMethodField('get_city')
     org_name = serializers.SerializerMethodField('get_org_name')
     about_org = serializers.SerializerMethodField('get_about_org')
+    logo = serializers.SerializerMethodField('get_org_logo')
     skills = serializers.SerializerMethodField('get_skills')
 
     # get org name from Organization model
@@ -44,6 +45,13 @@ class PostingSerializer(serializers.ModelSerializer):
     # get about org from Organization model
     def get_about_org(self, obj):
         return obj.organization.about_org
+    # get logo from Organization model
+    def get_org_logo(self, obj):
+        try:
+            if obj.organization.logo.url:
+                return obj.organization.logo.url
+        except:
+            return None
     # get city name from City model
     def get_city(self, obj):
         return obj.city.city
@@ -57,4 +65,4 @@ class PostingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Posting
-        fields = ['id','org_name','about_org','title','last_updated_on','city','country','description','contact_details','posting_url','skills']
+        fields = ['id','org_name','about_org','logo','title','last_updated_on','deactivated','city','country','description','contact_details','posting_url','skills']

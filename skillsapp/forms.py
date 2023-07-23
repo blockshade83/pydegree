@@ -28,3 +28,16 @@ class SkillCreateForm(forms.Form):
     def clean(self):
         if self.cleaned_data.get('skill_name') == '':
             raise ValidationError('Field is mandatory')
+
+class OrgForm(forms.Form):
+    org_name = forms.CharField(required = True, label = 'Organization Name')
+    about_org = forms.CharField(required = True, label = 'About Organization')
+    org_website = forms.CharField(required = True, label = 'Website')
+    logo = forms.FileField()
+
+class PostingForm(forms.Form):
+    title = forms.CharField(required = True, label = 'Title')
+    description = forms.CharField(required = True, label = 'Description')
+    city = forms.CharField(required = True, label = 'City')
+    posting_url = forms.URLField(label = 'Posting URL')
+    contact_details = forms.CharField(label = 'Contact Details')

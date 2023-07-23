@@ -1,24 +1,38 @@
-<div class="container-fluid">
-    <div class="row bg-white border-bottom" style="min-height:30px;padding-bottom:10px">
-      <div class="col">
+<!-- https://stackoverflow.com/questions/28240746/django-how-to-implement-alertpopup-message-after-complete-method-in-view -->
+
+
+<div class="grid-container">
+    <div class="item1">
         {% if user.is_authenticated %}
           <p>{{ user }}</p>
         {% endif %}
+    </div>
 
-      </div>
-      <div class="col-6">
+    <div class="item2">
         {% include "./header.html" %}
-      </div>
-      <div class="col"></div>
     </div>
 
-    <div class="row bg-light" style="min-height:400px;padding-top:10px">
-      <div class="col p-3">{% block content_left %}{% endblock %}</div>
-      <div class="col-6 rounded border p-3 bg-white">{% block content_center %}{% endblock %}</div>
-      <div class="col p-3">{% block content_right %}{% endblock %}</div>
+    <div class="item3"></div>
+
+    <div class="item4">
+      {% block content_left %}{% endblock %}
     </div>
 
-    <div class="row">
+    <div class="item5">
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-primary" role="alert">
+          {{ message }}
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content_center %}{% endblock %}
+    </div>
+
+    <div class="item6">{% block content_right %}{% endblock %}</div>
+
+    <div class="item7">
         {% include "./footer.html" %}
     </div>
 </div>

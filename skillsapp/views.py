@@ -4,13 +4,14 @@ from django.template import loader
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.messages import constants as messages
+# from django.contrib.messages import constants
+from django.contrib import messages
 from datetime import datetime
 from .forms import *
 from .serializers import *
 
 def index(request):
-    posting_instances = Posting.objects.all()
+    posting_instances = Posting.objects.filter(deactivated=False)
     # initialize city, org, skill objects
     city = None
     org = None
@@ -82,19 +83,28 @@ def register(request):
         org_website = request.POST['org_website']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
+        logo = request.FILES.get('logo')
 
         if password1 != password2:
-            messages.error(request, "Passwords do not match.")
-            return HttpResponseRedirect('register')
+            messages.info(request, "Passwords do not match.")
+            # return HttpResponseRedirect('/register')
+
+        orgForm = OrgForm(request.POST, request.FILES)
+
+        if not orgForm.is_valid():
+            messages.info(request, 'Invalid form input')
+            return HttpResponseRedirect('/register')
 
         user = User.objects.create_user(username=username, password=password1)
         organization = Organization.objects.create(user=user,
                                                    org_name=org_name,
                                                    about_org=about_org,
-                                                   org_website=org_website)
+                                                   org_website=org_website,
+                                                   logo=logo)
         user.save()
         organization.save()
-        return HttpResponse('Account was created')
+        # return HttpResponse('Account was created')
+        return HttpResponseRedirect('/')
     return render(request, 'register.html')
 
 def user_login(request):
@@ -105,10 +115,12 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return HttpResponseRedirect('/')
+            messages.info(request, 'Login succesful')
+            return HttpResponseRedirect('my_postings')
         else:
             # error when attempting to authenticate
-            return render(request, 'login.html', {'error': True})
+            messages.info(request, 'Username or password incorrect. Please try again.')
+            return HttpResponseRedirect('login')
     else:
         # request method is not POST
         return render(request, 'login.html')
@@ -116,6 +128,7 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
+    messages.info(request, 'You have logged out.')
     return HttpResponseRedirect('/')
 
 @login_required
@@ -124,7 +137,7 @@ def add_posting(request):
         title = request.POST['title']
         description = request.POST['description']
         posting_url = request.POST['posting_url']
-        contact_details = request.POST.getlist('contact_details')
+        contact_details = request.POST['contact_details']
         posted_on = datetime.today()
         last_updated_on = datetime.today()
         skills = request.POST.getlist('skills_select')
@@ -160,6 +173,8 @@ def view_posting(request, posting_id):
     if request.method == 'GET':
         posting_instance = Posting.objects.get(id=posting_id)
         posting = PostingSerializer(posting_instance).data
+        if posting_instance.deactivated:
+            messages.info(request, 'This posting is currently deactivated')
         return render(request, 'view_posting.html', {'posting': posting})
     else:
         return HttpResponseRedirect('/')
@@ -177,8 +192,6 @@ def my_postings(request):
 @login_required
 def edit_posting(request, posting_id):
     if request.method == 'POST':
-        if (request.POST['posting_url'] == "" and request.POST['description'] == ""):
-            return HttpResponse('Posting URL can be blank only if alternative contact details are specified')
         try:
             # get posting instance based on id
             posting_instance = Posting.objects.get(id=posting_id)
@@ -187,7 +200,7 @@ def edit_posting(request, posting_id):
             posting_instance.title = request.POST['title']
             posting_instance.description = request.POST['description']
             posting_instance.posting_url = request.POST['posting_url']
-            posting_instance.contact_details = request.POST.getlist('contact_details')
+            posting_instance.contact_details = request.POST['contact_details']
             posting_instance.last_updated_on = datetime.today()
             posting_instance.city = City.objects.get(city=request.POST['city_select'])
 
@@ -210,8 +223,8 @@ def edit_posting(request, posting_id):
                 posting_skill_instance = PostingSkills.objects.get_or_create(posting=posting_instance,skill=skill_instance)
 
             posting_instance.save()
-
-            return HttpResponse('Posting updated')
+            messages.info(request, 'Posting updated')
+            return HttpResponseRedirect('/edit_posting/'+str(posting_id))
         except Posting.DoesNotExist:
             return HttpResponseRedirect('/')
     else:
@@ -243,7 +256,23 @@ def reconfirm_posting(request, posting_id):
             # get posting instance based on id
             posting_instance = Posting.objects.get(id=posting_id)
             posting_instance.last_updated_on = datetime.today()
+            posting_instance.deactivated = False
             posting_instance.save()
+            messages.info(request, 'Posting for ' + posting_instance.title + ' updated.')
+        except Posting.DoesNotExist:
+            return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/my_postings')
+
+@login_required
+def deactivate_posting(request, posting_id):
+    if request.method == 'GET':
+        try:
+            # get posting instance based on id
+            posting_instance = Posting.objects.get(id=posting_id)
+            posting_instance.last_updated_on = datetime.today()
+            posting_instance.deactivated = True
+            posting_instance.save()
+            messages.info(request, 'Posting for ' + posting_instance.title + ' deactivated.')
         except Posting.DoesNotExist:
             return HttpResponseRedirect('/')
     return HttpResponseRedirect('/my_postings')
@@ -255,13 +284,23 @@ def update_org_details(request):
         org_name = request.POST['org_name']
         about_org = request.POST['about_org']
         org_website = request.POST['org_website']
+        if request.FILES:
+            logo = request.FILES.get('logo')
+
+        orgForm = OrgForm(request.POST, request.FILES)
+
+        if not orgForm.is_valid():
+            messages.info(request, 'Invalid form input')
+            return HttpResponseRedirect('/update_org_details')
 
         organization.org_name = org_name
         organization.about_org = about_org
         organization.org_website = org_website
+        organization.logo = logo
 
         organization.save()
-        return HttpResponseRedirect('/')
+        messages.info(request, 'Organization details succesfully updated.')
+        return HttpResponseRedirect('/update_org_details')
 
     else:
         return render(request, 'update_org_details.html', {'organization': organization})

@@ -4,67 +4,72 @@
 
 {% block content_left %}
 
-  <!-- <img src="{% static 'skillsapp/background-1.jpeg' %}" style="max-width:20%;"> -->
-      <h5><strong>Filter Jobs</strong></h5><br><br>
+  <h5><strong>Filter Jobs</strong></h5><br>
 
-      <form action="{% url 'index' %}" method = "POST" enctype="multipart/form-data">
-        {% csrf_token %}
+  <form action="{% url 'index' %}" method = "POST" enctype="multipart/form-data">
+    {% csrf_token %}
 
-      <p>City</p>
-      <select name="city_select" id="city_select" style="width: 60%;">
-        {% if not city_selection %}
-          <option selected disabled> -- select a City -- </option>
-        {% endif %}
-        {% for city in cities %}
-          {% if city == city_selection %}
-            <option selected>{{ city }}</option>
-          {% else %}
-            <option>{{ city }}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
-      <br><br>
+  <p><strong>City</strong></p>
+  <select name="city_select" id="city_select" class="select-type1">
+    {% if not city_selection %}
+      <option selected disabled></option>
+    {% else %}
+      <option disabled></option>
+    {% endif %}
+    {% for city in cities %}
+      {% if city == city_selection %}
+        <option selected>{{ city }}</option>
+      {% else %}
+        <option>{{ city }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  <br><br>
 
-      <p>Organization</p>
-      <select name="org_select" id="org_select" style="width: 60%;">
-        {% if not org_selection %}
-          <option selected disabled> -- select an Organization -- </option>
-        {% endif %}
-        {% for org in organizations %}
-          {% if org == org_selection %}
-            <option selected>{{ org }}</option>
-          {% else %}
-            <option>{{ org }}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
-      <br><br>
+  <p><strong>Organization</strong></p>
+  <select name="org_select" id="org_select" class="select-type1">
+    {% if not org_selection %}
+      <option selected disabled></option>
+    {% else %}
+      <option disabled></option>
+    {% endif %}
+    {% for org in organizations %}
+      {% if org == org_selection %}
+        <option selected>{{ org }}</option>
+      {% else %}
+        <option>{{ org }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  <br><br>
 
-      <p>Skill</p>
-      <select name="skill_select" id="skill_select" style="width: 60%;">
-        {% if not skill_selection %}
-          <option selected disabled> -- select a Skill -- </option>
-        {% endif %}
-        {% for skill in skills %}
-          {% if skill == skill_selection %}
-            <option selected>{{ skill }}</option>
-          {% else %}
-            <option>{{ skill }}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
-      <br><br>
+  <p><strong>Skill</strong></p>
+  <select name="skill_select" id="skill_select" class="select-type1">
+    {% if not skill_selection %}
+      <option selected disabled></option>
+    {% else %}
+      <option disabled></option>
+    {% endif %}
+    {% for skill in skills %}
+      {% if skill == skill_selection %}
+        <option selected>{{ skill }}</option>
+      {% else %}
+        <option>{{ skill }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  <br><br>
 
-        <input type="submit" class="btn btn-primary btn-sm" name="submit" value="Apply filters"/>
-        <a class="btn btn-primary btn-sm" name="reset" href="/">Reset filters</a>
-      </form>
-      <br><br>
+    <input type="submit" class="btn btn-primary input-type1" name="submit" value="Apply filters"/>
+    <input type="button" class="btn btn-primary input-type1" name="reset" onclick="location.href='/';" value="Reset Filters" />
+  </form>
+  <br><br>
 
-      <form action="{% url 'index' %}" method = "GET" value={{request.GET.keyword}}>
-        <input type="text" name="keyword" value="{{request.GET.keyword}}" placeholder="Search job descriptions" style="width: 60%;"/>
-        <br><br>
-        <input type="submit" class="btn btn-primary btn-sm" name="submit" value="Search"/>
-      </form>
+  <form action="{% url 'index' %}" method = "GET" value={{request.GET.keyword}}>
+    <input type="text" name="keyword" value="{{request.GET.keyword}}" placeholder="Search job descriptions" style="width:80%; max-width: 500px;"/>
+    <br><br>
+    <input type="submit" class="btn btn-primary input-type1" name="submit" value="Search"/><br><br>
+  </form>
 
 {% endblock content_left%}
 
@@ -72,7 +77,7 @@
 
 {% block content_center %}
 
-      <h5><strong>Job Postings</strong></h5></br></br>
+      <h5><strong>Job Postings</strong></h5>
       {% if user.is_authenticated %}
       {% else %}
       {% endif %}
@@ -80,34 +85,39 @@
       <hr>
       {% for posting in postings %}
         <div class="row rounded p-1 mt-1 mx-1" >
-          <h5><strong>{{ posting.org_name }}</strong></h5>
-          <a href='{% url "view_posting" posting.id %}'> {{ posting.title }} </a>
-          <p>{{ posting.city }}, {{ posting.country }}</p>
-          <p>Skills:
-            {% for posting_skill in posting.skills %}
-              {% if posting_skill.skill_name == skill_selection %}
-                <mark style="background-color: dodgerblue;color: white;">{{ posting_skill.skill_name }}</mark>;
-              {% else %}
-                {{ posting_skill.skill_name }};
-              {% endif %}
-            {% endfor %}
-          </p>
-          <p>Apply at: <a href='{{ posting.posting_url }}'> {{ posting.posting_url }} </a></p>
-          <p>Alternative contact details: {{ posting.contact_details }}</p>
-          <p>Last updated: {{ posting.last_updated_on }}</p>
+          <div class="col-3">
+            <img class="img-thumbnail" src={{ posting.logo }} style="max-width: 90%;"/>
+          </div>
+          <div class="col-9">
+            <h6><strong>{{ posting.org_name }}</strong></h6>
+            <a href='{% url "view_posting" posting.id %}'> {{ posting.title }} </a>
+            <p>{{ posting.city }}, {{ posting.country }}</p>
+            <p>Skills:
+              {% for posting_skill in posting.skills %}
+                {% if posting_skill.skill_name == skill_selection %}
+                  <mark style="background-color: dodgerblue;color: white;">{{ posting_skill.skill_name }}</mark>;
+                {% else %}
+                  {{ posting_skill.skill_name }};
+                {% endif %}
+              {% endfor %}
+            </p>
+            <p>Apply at: <a href='{{ posting.posting_url }}'> {{ posting.posting_url }} </a></p>
+            <p>Alternative contact details: {{ posting.contact_details }}</p>
+            <p>Last updated: {{ posting.last_updated_on }}</p>
+          </div>
           <hr>
         </div>
       {% endfor %}
 
 <script type="text/javascript">
   $(document).ready(function() {
-    $('#city_select').chosen();
+    $('#city_select').chosen({allow_single_deselect: true});
   });
   $(document).ready(function() {
-    $('#org_select').chosen();
+    $('#org_select').chosen({allow_single_deselect: true});
   });
   $(document).ready(function() {
-    $('#skill_select').chosen();
+    $('#skill_select').chosen({allow_single_deselect: true});
   });
 </script>
 

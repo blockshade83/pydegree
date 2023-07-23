@@ -10,7 +10,7 @@
     <table>
       <tr>
         <td>Title</td>
-        <td><input type="text" class="form-control" name="title" id="title" value="{{ posting.title }}" size=50 required></td>
+        <td><input type="text" class="form-control" name="title" id="title" size=50 required value="{{ posting.title }}"></td>
       </tr>
       <tr>
         <td>Description</td>
@@ -36,7 +36,7 @@
       </tr>
       <tr>
         <td>Alternative Contact Details</td>
-        <td><input type="text" class="form-control" name="contact_details" id="contact_details" value={{ posting.contact_details }} size=50></td>
+        <td><input type="text" class="form-control" name="contact_details" id="contact_details" value="{{ posting.contact_details }}" size=50></td>
       </tr>
       <tr>
         <td>Skills You will Develop</td>

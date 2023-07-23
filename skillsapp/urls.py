@@ -13,5 +13,6 @@ urlpatterns = [
     path('my_postings', views.my_postings, name = 'my_postings'),
     path('edit_posting/<int:posting_id>', views.edit_posting, name = 'edit_posting'),
     path('reconfirm_posting/<int:posting_id>', views.reconfirm_posting, name = 'reconfirm_posting'),
+    path('deactivate_posting/<int:posting_id>', views.deactivate_posting, name = 'deactivate_posting'),
     path('update_org_details', views.update_org_details, name = 'update_org_details'),
 ]

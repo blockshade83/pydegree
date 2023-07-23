@@ -44,6 +44,7 @@ class Posting(models.Model):
     last_updated_on = models.DateField()
     posting_url = models.URLField(max_length=300)
     contact_details = models.CharField(max_length = 250)
+    deactivated = models.BooleanField(default=False)
 
     def __str__(self):
         return self.organization.org_name + ' - ' + self.title
