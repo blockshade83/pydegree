@@ -3,22 +3,22 @@
 
 {% block content_center %}
 
-<form class="container mt-4" method="POST" enctype="multipart/form-data">
+<form class="container mt-4" method="POST" enctype="multipart/form-data" onSubmit="return checkForm(this)">
     {% csrf_token %}
 
     <table>
       <tr>
-        <td>Title</td>
+        <td>Title*</td>
         <td><input type="text" class="form-control" name="title" id="title" placeholder="Enter Title" size=50 required></td>
       </tr>
       <tr>
-        <td>Description</td>
+        <td>Description*</td>
         <td><textarea rows="10" column="50" class="form-control" name="description" id="description" placeholder="Enter Description" size=50 required></textarea></td>
       </tr>
       <tr>
-        <td>City</td>
+        <td>City*</td>
         <td>
-          <select name="city_select" id="city_select" style="width: 300px;" required>
+          <select name="city_select" id="city_select" style="width: 100%" required>
             <option selected disabled> -- select a City -- </option>
             {% for city in cities %}
               <option>{{ city }}</option>
@@ -27,17 +27,17 @@
         </td>
       </tr>
       <tr>
-        <td>Website</td>
+        <td>Apply at**</td>
         <td><input type="text" class="form-control" name="posting_url" id="posting_url" placeholder="Enter link to your website" size=50></td>
       </tr>
       <tr>
-        <td>Alternative Contact Details</td>
+        <td>Alternative Contact Details**</td>
         <td><input type="text" class="form-control" name="contact_details" id="contact_details" placeholder="If no website link is available, add contact details" size=50></td>
       </tr>
       <tr>
-        <td>Skills You will Develop</td>
+        <td>Skills You will Develop*</td>
         <td>
-          <select multiple="" name="skills_select" id="skills_select" style="width: 300px;" required>
+          <select multiple="" name="skills_select" id="skills_select" style="width: 100%" required>
             {% for skill in skills %}
               <option>{{ skill }}</option>
             {% endfor %}
@@ -46,10 +46,12 @@
       </tr>
       <tr>
         <td></td>
-        <td><input type="submit" value="Submit" class="btn btn-primary"></td>
+        <td><input type="submit" value="Submit" class="btn btn-primary button-type1"> <a href="/my_postings" class="btn btn-primary button-type1">Cancel</a></td>
       </tr>
     </table>
     <br>
+    <p>*Title, Description, City and Skills are mandatory fields</p>
+    <p>**At least one of the fields: Apply at, Alternative Contact Details needs to be filled in"
 </form>
 
 <!-- https://www.youtube.com/watch?v=NyrH70uH5zM -->
@@ -60,6 +62,19 @@
   $(document).ready(function() {
     $('#city_select').chosen();
   });
+</script>
+
+<script>
+  function checkForm(form) {
+    alert(form.posting_url.value );
+    if ( not (form.posting_url.value and form.contact_details.value) ) {
+      alert("Please fill in at least one of the fields: Posting URL, Contact Details");
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
 </script>
 
 {% endblock content_center%}

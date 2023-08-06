@@ -1,18 +1,30 @@
 <!-- https://stackoverflow.com/questions/28240746/django-how-to-implement-alertpopup-message-after-complete-method-in-view -->
-
+{% include "./header.html" %}
 
 <div class="grid-container">
     <div class="item1">
-        {% if user.is_authenticated %}
-          <p>{{ user }}</p>
-        {% endif %}
     </div>
 
     <div class="item2">
-        {% include "./header.html" %}
+        {% if user.is_authenticated %}
+          <a href="{% url 'index' %}" class="btn btn-outline-primary">Home</a>
+          <a href="{% url 'add_posting' %}" class="btn btn-outline-primary">Add Posting</a>
+          <a href="{% url 'my_postings' %}" class="btn btn-outline-primary">My Postings</a>
+          <a href="{% url 'update_org_details' %}" class="btn btn-outline-primary">Update Org Details</a>
+        {% else %}
+
+        {% endif %}
     </div>
 
-    <div class="item3"></div>
+    <div class="item3">
+      {% if user.is_authenticated %}
+        <p>{{ user }} <a href="{% url 'user_logout' %}" class="btn btn-primary">Sign Out</a></p>
+
+      {% else %}
+        <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+        <a href="{% url 'user_login' %}" class="btn btn-primary">Sign In</a>
+      {% endif %}
+    </div>
 
     <div class="item4">
       {% block content_left %}{% endblock %}

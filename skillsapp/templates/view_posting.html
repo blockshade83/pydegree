@@ -3,27 +3,30 @@
 
 {% block content_center %}
 
-<br><h5><strong>{{ posting.org_name }}</strong></h5><br>
-<p>{{ posting.about_org }}</p>
-<h5><strong>{{ posting.title }}</strong></h5><br>
-<p>{{ posting.description}}</p>
-<p><strong>Location: </strong>{{ posting.city }}, {{ posting.country}}</p>
-<p><strong>Skills You will Develop:</strong>
-    {% for posting_skill in posting.skills %}
-      {{ posting_skill.skill_name }};
-    {% endfor %}
-</p>
-<p>Apply at: <a href='{{ posting.posting_url }}'> {{ posting.posting_url }} </a></p>
-<p>Alternative Contact Details: {{ posting.contact_details }}</p>
+  <br><h5><strong>{{ posting.org_name }}</strong></h5><br>
+  <p>{{ posting.about_org }}</p>
+  <h5><strong>{{ posting.title }}</strong></h5><br>
+  <p>{{ posting.description}}</p>
+  <p><strong>Location: </strong>{{ posting.city }}, {{ posting.country}}</p>
+  <p><strong>Skills You will Develop:</strong>
+      {% for posting_skill in posting.skills %}
+        {{ posting_skill.skill_name }};
+      {% endfor %}
+  </p>
+  <p>Apply at: <a href='https://{{ posting.posting_url }}'> {{ posting.posting_url }} </a></p>
+  <p>Alternative Contact Details: {{ posting.contact_details }}</p>
+  <p>Last Updated: {{ posting.last_updated_on }}</p>
 
-<!-- https://www.youtube.com/watch?v=NyrH70uH5zM -->
-<script type="text/javascript">
-  $(document).ready(function() {
-    $('#skills_select').chosen();
-  });
-  $(document).ready(function() {
-    $('#city_select').chosen();
-  });
-</script>
+  {% if edit_mode %}
+    <a class="btn btn-primary button-type1" name="edit" href="/edit_posting/{{ posting.id }}">Edit</a>
+
+    {% if posting.deactivated %}
+      <td><a class="btn btn-warning button-type1" name="reactivate" href="/repost/{{ posting.id }}/posting">Reactivate</a></td>
+    {% else %}
+      <td><a class="btn btn-success button-type1" name="repost" href="/repost/{{ posting.id }}/posting">Repost</a></td>
+      <td><a class="btn btn-warning button-type1" name="deactivate" href="/deactivate_posting/{{ posting.id }}/posting">Deactivate</a></td>
+    {% endif %}
+
+  {% endif %}
 
 {% endblock content_center%}

@@ -5,7 +5,7 @@
 
   <h5><strong>My Organization's Postings</strong></h5></br></br>
 
-  <table class="table">
+  <table class="table table-responsive">
     <tr>
       <th>Posting Title</th>
       <th>Location</th>
@@ -21,19 +21,15 @@
       <td>{{ posting.city }}, {{ posting.country}}</td>
       <td>{{ posting.last_updated_on }}</td>
       <td>
-        {% if posting.deactivated %}
-          <p>deactivated</p>
-        {% else %}
-          <p>active</p>
-        {% endif %}
+        {% if posting.deactivated %}deactivated{% else %}active{% endif %}
       </td>
       <td><a class="btn btn-primary btn-sm" name="view" href="view_posting/{{ posting.id }}">View</a></td>
       <td><a class="btn btn-primary btn-sm" name="edit" href="edit_posting/{{ posting.id }}">Edit</a></td>
         {% if posting.deactivated %}
-          <td><a class="btn btn-warning btn-sm" name="reactivate" href="reconfirm_posting/{{ posting.id }}">Reactivate</a></td>
+          <td><a class="btn btn-warning btn-sm" name="reactivate" href="repost/{{ posting.id }}/all">Reactivate</a></td>
         {% else %}
-          <td><a class="btn btn-success btn-sm" name="reconfirm" href="reconfirm_posting/{{ posting.id }}">Reconfirm</a></td>
-          <td><a class="btn btn-warning btn-sm" name="deactivate" href="deactivate_posting/{{ posting.id }}">Deactivate</a></td>
+          <td><a class="btn btn-success btn-sm" name="repost" href="repost/{{ posting.id }}/all">Repost</a></td>
+          <td><a class="btn btn-warning btn-sm" name="deactivate" href="deactivate_posting/{{ posting.id }}/all">Deactivate</a></td>
         {% endif %}
       </td>
 

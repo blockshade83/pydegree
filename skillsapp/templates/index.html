@@ -60,20 +60,20 @@
   </select>
   <br><br>
 
-    <input type="submit" class="btn btn-primary input-type1" name="submit" value="Apply filters"/>
-    <input type="button" class="btn btn-primary input-type1" name="reset" onclick="location.href='/';" value="Reset Filters" />
+    <p>
+      <input type="submit" class="btn btn-primary button-type1" name="submit" value="Apply Filters"/>
+      <input type="button" class="btn btn-outline-primary" name="reset" onclick="location.href='/';" value="Reset Filters"/>
+    </p>
   </form>
   <br><br>
 
   <form action="{% url 'index' %}" method = "GET" value={{request.GET.keyword}}>
-    <input type="text" name="keyword" value="{{request.GET.keyword}}" placeholder="Search job descriptions" style="width:80%; max-width: 500px;"/>
+    <input type="search" name="keyword" value="{{request.GET.keyword}}" placeholder="Search job descriptions" style="width:80%;"/>
     <br><br>
-    <input type="submit" class="btn btn-primary input-type1" name="submit" value="Search"/><br><br>
+    <input type="submit" class="btn btn-primary button-type1" name="submit" value="Search"/><br><br>
   </form>
 
 {% endblock content_left%}
-
-    <!-- <div class="col-6 rounded border p-3 bg-white"> -->
 
 {% block content_center %}
 
@@ -89,8 +89,8 @@
             <img class="img-thumbnail" src={{ posting.logo }} style="max-width: 90%;"/>
           </div>
           <div class="col-9">
-            <h6><strong>{{ posting.org_name }}</strong></h6>
-            <a href='{% url "view_posting" posting.id %}'> {{ posting.title }} </a>
+            <a href='{% url "view_posting" posting.id %}'> <h6>{{ posting.title }} </h6></a>
+            <p>{{ posting.org_name }}</p>
             <p>{{ posting.city }}, {{ posting.country }}</p>
             <p>Skills:
               {% for posting_skill in posting.skills %}
@@ -109,6 +109,7 @@
         </div>
       {% endfor %}
 
+<!-- Javascript to manage select boxes -->
 <script type="text/javascript">
   $(document).ready(function() {
     $('#city_select').chosen({allow_single_deselect: true});

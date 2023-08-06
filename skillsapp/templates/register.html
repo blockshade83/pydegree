@@ -3,42 +3,55 @@
 
 {% block content_center %}
 
-<form class="container mt-4" method="POST" enctype="multipart/form-data">
+<form class="container mt-4" method="POST" enctype="multipart/form-data" onSubmit="return passwordCheck(this)">
     {% csrf_token %}
 
-    <table class="table table-sm">
+    <table class="table table-sm table-responsive table-borderless">
       <tr>
         <td>Email Id</td>
-        <td><input type="email" class="form-control" name="email" id="email" placeholder="Enter Email Id" size=30></td>
+        <td><input type="email" class="form-control" name="email" id="email" placeholder="Enter Email Id" required size=30></td>
       </tr>
       <tr>
         <td>Password</td>
-        <td><input type="password" class="form-control" name="password1" id="password1" placeholder="Enter Password" size=30></td>
+        <td><input type="password" class="form-control" name="password1" id="password1" placeholder="Enter Password" required size=30></td>
       </tr>
       <tr>
         <td>Confirm Password</td>
-        <td><input type="password" class="form-control" name="password2" id="password2" placeholder="Confirm Password" size=30></td>
+        <td><input type="password" class="form-control" name="password2" id="password2" placeholder="Confirm Password" required size=30></td>
       </tr>
       <tr>
         <td>Organization Name</td>
-        <td><input type="text" class="form-control" name="org_name" id="org_name" placeholder="Enter Organization Name" size=30></td>
+        <td><input type="text" class="form-control" name="org_name" id="org_name" placeholder="Enter Organization Name" required size=30></td>
       </tr>
       <tr>
         <td>About Organization</td>
-        <td><textarea rows="4" cols="50" class="form-control" name="about_org" id="about_org" placeholder="Enter Details about the organization" size=30></textarea></td>
+        <td><textarea rows="4" cols="50" class="form-control" name="about_org" id="about_org" placeholder="Enter Details about the organization" required size=30></textarea></td>
       </tr>
       <tr>
         <td>Website</td>
-        <td><input type="text" class="form-control" name="org_website" id="org_website" placeholder="Enter Website" size=30></td>
+        <td><input type="text" class="form-control" name="org_website" id="org_website" placeholder="Enter Website" required size=30></td>
       </tr>
       <tr>
         <td>Logo</td>
-        <td><input type="file" class="form-control" name="logo" id="logo"></td>
+        <td><input type="file" class="form-control" name="logo" id="logo" required></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type="submit" value="Submit" class="btn btn-primary button-type1"></td>
       </tr>
     </table>
 
-    <br>
-<input type="submit" value="Submit" class="button-type1">
 </form>
 
+<script>
+  function passwordCheck(form) {
+    if (form.password1.value != form.password2.value) {
+      alert("The passwords do not match");
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+</script>
 {% endblock content_center%}

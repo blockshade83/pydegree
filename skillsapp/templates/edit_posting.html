@@ -9,15 +9,15 @@
 
     <table>
       <tr>
-        <td>Title</td>
+        <td>Title*</td>
         <td><input type="text" class="form-control" name="title" id="title" size=50 required value="{{ posting.title }}"></td>
       </tr>
       <tr>
-        <td>Description</td>
+        <td>Description*</td>
         <td><textarea rows="10" column="50" class="form-control" name="description" id="description" size=50 required>{{ posting.description }}</textarea></td>
       </tr>
       <tr>
-        <td>City</td>
+        <td>City*</td>
         <td>
           <select name="city_select" id="city_select" style="width: 300px;" required>
             {% for city in cities %}
@@ -31,15 +31,15 @@
         </td>
       </tr>
       <tr>
-        <td>Website</td>
-        <td><input type="text" class="form-control" name="posting_url" id="posting_url" value={{ posting.posting_url }} size=50></td>
+        <td>Apply at**</td>
+        <td><input type="text" class="form-control" name="posting_url" id="posting_url" value="{{ posting.posting_url }}" size=50></td>
       </tr>
       <tr>
-        <td>Alternative Contact Details</td>
+        <td>Alternative Contact Details**</td>
         <td><input type="text" class="form-control" name="contact_details" id="contact_details" value="{{ posting.contact_details }}" size=50></td>
       </tr>
       <tr>
-        <td>Skills You will Develop</td>
+        <td>Skills You will Develop*</td>
         <td>
           <select multiple="" name="skills_select" id="skills_select" style="width: 300px;" required>
             {% for key,value in skills.items %}
@@ -54,10 +54,12 @@
       </tr>
       <tr>
         <td></td>
-        <td><input type="submit" value="Update" class="btn btn-primary"></td>
+        <td><input type="submit" value="Update" class="btn btn-primary button-type1"> <a href="/view_posting/{{posting.id}}" class="btn btn-primary button-type1">Cancel</a></td>
       </tr>
     </table>
     <br>
+    <p>*Title, Description, City and Skills are mandatory fields</p>
+    <p>**At least one of the fields: Apply at, Alternative Contact Details needs to be filled in"
 </form>
 
 <!-- https://www.youtube.com/watch?v=NyrH70uH5zM -->

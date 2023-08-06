@@ -6,7 +6,7 @@
 <form class="container mt-4" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <table class="table table-sm">
+    <table class="table table-sm table-responsive table-borderless">
       <tr>
         <td>Username</td>
         <td><input type="email" class="form-control input-type1" name="username" id="email" placeholder="Enter Username" size=30></td>
@@ -15,10 +15,12 @@
         <td>Password</td>
         <td><input type="password" class="form-control input-type1" name="password" id="password" placeholder="Enter Password" size=30></td>
       </tr>
+      <tr>
+        <td></td>
+        <td><input type="submit" value="Sign In" class="btn btn-primary button-type1"></td>
+      </tr>
     </table>
 
-    <br>
-<input type="submit" value="Submit" class="btn btn-primary">
 </form>
 
 {% endblock content_center%}
