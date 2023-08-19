@@ -47,6 +47,7 @@ class PostingSerializer(serializers.ModelSerializer):
         return obj.organization.about_org
     # get logo from Organization model
     def get_org_logo(self, obj):
+        # use try to avoid errors if url for logo image doesn't exist
         try:
             if obj.organization.logo.url:
                 return obj.organization.logo.url

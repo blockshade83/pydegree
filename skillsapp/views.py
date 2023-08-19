@@ -46,11 +46,17 @@ def index(request):
             posting_instances = posting_instances.filter(organization=org_instance)
         # filter instances by skill if a skills was used as a filter
         if skill:
+            # get skill instanc
             skill_instance = Skill.objects.get(skill_name=skill)
+            # find all postings which used the specific skill
             posting_skills_instances = PostingSkills.objects.filter(skill=skill_instance)
+            # initialize empty list to store the postings
             posting_id_list = []
+            # iterate over all postings in the database which used the specific skill
             for instance in posting_skills_instances:
+                # append posting id values to the list
                 posting_id_list.append(instance.posting.id)
+            # filter the initial list of postings to include only those that used the specific skill
             posting_instances = posting_instances.filter(id__in=posting_id_list)
 
     # filter instances by keyword if the keyword is found in the description
@@ -74,9 +80,10 @@ def index(request):
                                           'city_selection': city,
                                           'org_selection': org,
                                           'skill_selection': skill })
-
+# function for registration
 def register(request):
     if request.method == 'POST':
+        # read data from the form
         username = request.POST['email']
         org_name = request.POST['org_name']
         about_org = request.POST['about_org']
@@ -85,13 +92,17 @@ def register(request):
         password2 = request.POST['password2']
         logo = request.FILES.get('logo')
 
+        # initialize form for validation
         orgForm = OrganizationForm(request.POST, request.FILES)
 
+        # validate form
         if not orgForm.is_valid():
             messages.info(request, orgForm.errors)
             return HttpResponseRedirect('/register')
 
+        # create user instance
         user = User.objects.create_user(username=username, password=password1)
+        # create organization instance
         organization = Organization.objects.create(user=user,
                                                    org_name=org_name,
                                                    about_org=about_org,
@@ -99,7 +110,6 @@ def register(request):
                                                    logo=logo)
         user.save()
         organization.save()
-        # return HttpResponse('Account was created')
         messages.info(request, "Account has been created. Please sign in")
         return HttpResponseRedirect('/login')
     return render(request, 'register.html')
@@ -148,6 +158,7 @@ def update_org_details(request):
     else:
         return render(request, 'update_org_details.html', {'organization': organization})
 
+# function for login
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -166,12 +177,14 @@ def user_login(request):
         # request method is not POST
         return render(request, 'login.html')
 
+# function for logout
 @login_required
 def user_logout(request):
     logout(request)
     messages.info(request, 'You have logged out.')
     return HttpResponseRedirect('/')
 
+# function to validate city selection in the drop-down list
 @login_required
 def validate_city(request):
     # validate city selection (validation disabled via Javascript due to use of chosen library)
@@ -190,6 +203,7 @@ def validate_city(request):
         return False
     return True
 
+# function to validate skill selection
 @login_required
 def validate_skills(request):
     # validate skills selection (validation disabled via Javascript due to use of chosen library)
@@ -207,9 +221,11 @@ def validate_skills(request):
         return False
     return True
 
+# function to add a posting
 @login_required
 def add_posting(request):
     if request.method == 'POST':
+        # read form data
         title = request.POST['title']
         description = request.POST['description']
         posting_url = request.POST['posting_url']
@@ -218,11 +234,13 @@ def add_posting(request):
         last_updated_on = datetime.today()
         organization = Organization.objects.get(user=request.user)
 
+        # validate city
         if validate_city(request):
             city = request.POST['city_select']
         else:
             return HttpResponseRedirect('/add_posting')
 
+        # validate skills
         if validate_skills(request):
             skills = request.POST.getlist('skills_select')
         else:
@@ -243,6 +261,7 @@ def add_posting(request):
             # reload page
             return HttpResponseRedirect('/add_posting')
 
+        # create posting instance
         posting = Posting.objects.create(organization=organization,
                                          title=title,
                                          description=description,
@@ -253,6 +272,7 @@ def add_posting(request):
                                          last_updated_on=last_updated_on)
         posting.save()
 
+        # create instances in PostingSkills
         for skill in skills:
             skill_instance = Skill.objects.get(skill_name=skill)
             posting_skill = PostingSkills.objects.create(skill=skill_instance,posting=posting)
@@ -268,9 +288,15 @@ def add_posting(request):
         cities_list = get_cities_list()
         return render(request, 'add_posting.html', {'skills': skills_list, 'cities': cities_list})
 
+# function to view posting
 def view_posting(request, posting_id):
     if request.method == 'GET':
-        posting_instance = Posting.objects.get(id=posting_id)
+        try:
+            # get posting instance based on id
+            posting_instance = Posting.objects.get(id=posting_id)
+        except Posting.DoesNotExist:
+            messages.info('The request encountered an error.')
+            return HttpResponseRedirect('/')
         posting = PostingSerializer(posting_instance).data
 
         # check if the logged in user owns the posting
@@ -285,22 +311,28 @@ def view_posting(request, posting_id):
         except:
             pass
 
+        # display a message for deactivated postings
         if posting_instance.deactivated:
             messages.info(request, 'This posting is currently deactivated')
         return render(request, 'view_posting.html', {'posting': posting, 'edit_mode': edit_mode})
     else:
         return HttpResponseRedirect('/')
 
+# function to display postings of an organization
 @login_required
 def my_postings(request):
     if request.method == 'GET':
+        # get instance for the organization
         org_instance = Organization.objects.get(user=request.user)
+        # filter posting instances of the organization
         posting_instances = Posting.objects.filter(organization=org_instance)
+        # serialize list of postings
         postings_list = PostingSerializer(posting_instances, many=True).data
         return render(request, 'my_postings.html', {'postings': postings_list})
     else:
         return HttpResponseRedirect('/')
 
+# function to edit a posting
 @login_required
 def edit_posting(request, posting_id):
     if request.method == 'POST':
@@ -311,11 +343,13 @@ def edit_posting(request, posting_id):
             messages.info('The request encountered an error.')
             return HttpResponseRedirect('/my_postings')
 
+        # validate city selected
         if validate_city(request):
             city = request.POST['city_select']
         else:
             return HttpResponseRedirect('/edit_posting/'+str(posting_id))
 
+        # validate skills selected
         if validate_skills(request):
             skills = request.POST.getlist('skills_select')
         else:
@@ -363,13 +397,18 @@ def edit_posting(request, posting_id):
             # create instance if it doesn't exist
             posting_skill_instance = PostingSkills.objects.get_or_create(posting=posting_instance,skill=skill_instance)
 
+        # save posting and display message
         posting_instance.save()
         messages.info(request, 'Posting updated')
         return HttpResponseRedirect('/view_posting/'+str(posting_id))
 
     else:
-        # get posting instance
-        posting_instance = Posting.objects.get(id=posting_id)
+        try:
+            # get posting instance based on id
+            posting_instance = Posting.objects.get(id=posting_id)
+        except Posting.DoesNotExist:
+            messages.info('The request encountered an error.')
+            return HttpResponseRedirect('/my_postings')
         posting = PostingSerializer(posting_instance).data
         # get list of skills in the database to populate selection forms
         skills_list = get_skills_list()
@@ -389,6 +428,7 @@ def edit_posting(request, posting_id):
                     skills_intersected[skill] = 'yes'
         return render(request, 'edit_posting.html', {'posting': posting, 'skills': skills_intersected, 'cities': cities_list})
 
+# function to repost a job
 @login_required
 def repost(request, posting_id, return_to):
     if request.method == 'GET':
@@ -402,6 +442,7 @@ def repost(request, posting_id, return_to):
             messages.info(request, 'Posting for ' + posting_instance.title + ' updated.')
         except Posting.DoesNotExist:
             messages.info(request, 'The request encountered an error.')
+    # redirect based on return_to parameter
     if return_to == 'all':
         return HttpResponseRedirect('/my_postings')
     elif return_to == 'posting':
@@ -410,7 +451,7 @@ def repost(request, posting_id, return_to):
         messages.info(request, 'The request encountered an error.')
         return HttpResponseRedirect('/')
 
-# deactivate a posting
+# function to deactivate a posting
 @login_required
 def deactivate_posting(request, posting_id, return_to):
     if request.method == 'GET':

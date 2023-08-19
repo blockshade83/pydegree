@@ -7,6 +7,7 @@ class Skill(models.Model):
     def __str__(self):
         return self.skill_name
 
+# model for Organization, making use of User as a ForeignKey
 class Organization(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     org_name = models.CharField(max_length=100)
@@ -17,6 +18,7 @@ class Organization(models.Model):
     def __str__(self):
         return self.org_name
 
+# model for Country
 class Country(models.Model):
     class Meta:
         verbose_name_plural = "Countries" # name to display in Django Admin interface, which defaults plural to class name + 's'
@@ -25,6 +27,7 @@ class Country(models.Model):
     def __str__(self):
         return self.country
 
+# model for City
 class City(models.Model):
     class Meta:
         verbose_name_plural = "Cities" # name to display in Django Admin interface, which defaults plural to class name + 's'
@@ -35,6 +38,7 @@ class City(models.Model):
     def __str__(self):
         return self.city + ", " + Country.objects.get(city=self).country
 
+# model for Posting
 class Posting(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     title = models.CharField(max_length = 250)
@@ -52,6 +56,7 @@ class Posting(models.Model):
     class Meta:
         ordering = ['-last_updated_on'] # sort posting in descending order
 
+# model for skills on each Posting
 class PostingSkills(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     posting = models.ForeignKey(Posting, on_delete=models.CASCADE)

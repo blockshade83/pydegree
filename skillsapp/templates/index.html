@@ -6,11 +6,13 @@
 
   <h5><strong>Filter Jobs</strong></h5><br>
 
+  <!-- filtering of results using selection boxes is sent via POST method -->
   <form action="{% url 'index' %}" method = "POST" enctype="multipart/form-data">
     {% csrf_token %}
 
   <p><strong>City</strong></p>
   <select name="city_select" id="city_select" class="select-type1">
+    <!-- if a previous selection was made, city_selection will store the value -->
     {% if not city_selection %}
       <option selected disabled></option>
     {% else %}
@@ -26,6 +28,7 @@
   </select>
   <br><br>
 
+  <!-- if a previous selection was made, org_selection will store the value -->
   <p><strong>Organization</strong></p>
   <select name="org_select" id="org_select" class="select-type1">
     {% if not org_selection %}
@@ -43,6 +46,7 @@
   </select>
   <br><br>
 
+  <!-- if a previous selection was made, skill_selection will store the value -->
   <p><strong>Skill</strong></p>
   <select name="skill_select" id="skill_select" class="select-type1">
     {% if not skill_selection %}
@@ -62,15 +66,18 @@
 
     <p>
       <input type="submit" class="btn btn-primary button-type1" name="submit" value="Apply Filters"/>
+      <!-- reload page if Reset Filters button is clicked -->
       <input type="button" class="btn btn-outline-primary" name="reset" onclick="location.href='/';" value="Reset Filters"/>
     </p>
   </form>
   <br><br>
 
+  <!-- keyword search is sent via GET method -->
   <form action="{% url 'index' %}" method = "GET" value={{request.GET.keyword}}>
     <input type="search" name="keyword" value="{{request.GET.keyword}}" placeholder="Search job descriptions" style="width:80%;"/>
     <br><br>
-    <input type="submit" class="btn btn-primary button-type1" name="submit" value="Search"/><br><br>
+    <input type="submit" class="btn btn-primary button-type1" name="submit" value="Search"/>
+    <input type="button" class="btn btn-outline-primary" name="reset" onclick="location.href='/';" value="Reset"/>
   </form>
 
 {% endblock content_left%}
@@ -78,14 +85,13 @@
 {% block content_center %}
 
       <h5><strong>Job Postings</strong></h5>
-      {% if user.is_authenticated %}
-      {% else %}
-      {% endif %}
 
       <hr>
+      <!-- iterate over all postings loaded from the database -->
       {% for posting in postings %}
         <div class="row rounded p-1 mt-1 mx-1" >
           <div class="col-3">
+            <!-- logo of the organizations -->
             <img class="img-thumbnail" src={{ posting.logo }} style="max-width: 90%;"/>
           </div>
           <div class="col-9">
@@ -93,6 +99,7 @@
             <p>{{ posting.org_name }}</p>
             <p>{{ posting.city }}, {{ posting.country }}</p>
             <p>Skills:
+              <!-- iterate over all skills for each posting -->
               {% for posting_skill in posting.skills %}
                 {% if posting_skill.skill_name == skill_selection %}
                   <mark style="background-color: dodgerblue;color: white;">{{ posting_skill.skill_name }}</mark>;

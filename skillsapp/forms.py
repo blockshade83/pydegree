@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.conf import settings
 
+# form for validating registration inputs
 class OrganizationForm(UserCreationForm):
     email = forms.EmailField(required = True, label = 'Email')
     password1 = forms.CharField(required = True, label = 'password1')
@@ -19,6 +20,7 @@ class OrganizationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(OrganizationForm, self).__init__(*args, **kwargs)
 
+        # deactivate help text for email and password fields
         for fieldname in ['email', 'password1', 'password2']:
             self.fields[fieldname].help_text = None
 
@@ -26,6 +28,7 @@ class OrganizationForm(UserCreationForm):
         model = User
         fields = ('email','org_name','about_org','org_website','logo')
 
+# from for adding a skill
 class SkillCreateForm(forms.Form):
     skill_name = forms.CharField(required = True, label = 'Skill', max_length = 75)
 

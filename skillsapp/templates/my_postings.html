@@ -15,12 +15,14 @@
       <th></th>
       <th></th>
     </tr>
+    <!-- iterate over all postings -->
     {% for posting in postings %}
     <tr>
       <td>{{ posting.title }}</td>
       <td>{{ posting.city }}, {{ posting.country}}</td>
       <td>{{ posting.last_updated_on }}</td>
       <td>
+        <!-- posting status as a text is determined based on boolean field from the database-->
         {% if posting.deactivated %}deactivated{% else %}active{% endif %}
       </td>
       <td><a class="btn btn-primary btn-sm" name="view" href="view_posting/{{ posting.id }}">View</a></td>

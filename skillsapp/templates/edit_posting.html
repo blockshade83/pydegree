@@ -19,6 +19,7 @@
       <tr>
         <td>City*</td>
         <td>
+          <!-- Single select box for City -->
           <select name="city_select" id="city_select" style="width: 300px;" required>
             {% for city in cities %}
               {% if city == posting.city %}
@@ -39,6 +40,7 @@
         <td><input type="text" class="form-control" name="contact_details" id="contact_details" value="{{ posting.contact_details }}" size=50></td>
       </tr>
       <tr>
+        <!-- Multiple select box for skills -->
         <td>Skills You will Develop*</td>
         <td>
           <select multiple="" name="skills_select" id="skills_select" style="width: 300px;" required>

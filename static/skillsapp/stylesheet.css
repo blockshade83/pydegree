@@ -130,7 +130,7 @@ h6 {
         '. main-second .'
         '. main-third .'
         '. footer .';
-    /* used a 5% blank space to the left and right of the screen */
+    /* used a 3% blank space to the left and right of the screen */
     grid-template-columns: 3% 94% 3%;
     grid-row-gap: 1vw;
     background-color: white;
